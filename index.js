@@ -11,10 +11,12 @@ app.get('/proxy', async (req, res) => {
             method: 'get',
             url: targetUrl,
             headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
-            responseType: 'stream' // Streams the CSV file directly through
+            responseType: 'stream',
+            validateStatus: () => true // FORWARDS ERRORS INSTEAD OF CRASHING
         });
         
         res.setHeader('Content-Type', response.headers['content-type'] || 'text/csv');
+        res.status(response.status);
         response.data.pipe(res);
     } catch (e) {
         console.error(e);
